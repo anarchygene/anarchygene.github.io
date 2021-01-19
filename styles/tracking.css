@@ -1,0 +1,16 @@
+#main{
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.track{
+    border: 1px solid black;
+    position: relative;
+    margin: 1%;
+}
+
+.close{
+    position: absolute;
+    top: 0;
+    right: 0;
+}

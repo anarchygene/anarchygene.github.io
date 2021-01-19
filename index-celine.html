@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <link rel="stylesheet" href="styles/tracking.css">
+    <script src="scripts/add track.js"></script>
+    <script>
+        $(".close").on("click", () => {
+            console.log("yeet")
+            $(".track").remove()
+            //$(this).parent().remove()
+        })
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div class="track">
+            <button class="close">X</button>
+            <form action="get">
+                <label for="companyid">Company ID</label>
+                <input type="text" id="companyid">
+
+                <button type="submit">Search</button><br>
+            </form>
+            <label for="queueid">Queue ID</label>
+            <select name="queueid" id="queueid">
+                <option value="1">hello</option>
+            </select>
+
+            <label for="hide">Hide inactive</label>
+            <input type="checkbox" name="hide" id="hide">
+        </div>
+        <button id="add" onclick=add()>Add tracking</button>
+    </div>
+</body>
+</html>
