@@ -1,0 +1,90 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Eugene page</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="./node_modules/chart.js/dist/Chart.js"></script>
+    <!-- Celine part -->
+    <link rel="stylesheet" href="styles/tracking.css">
+    <script src="scripts/eugene-script.js"></script>
+</head>
+
+<body>
+    <!-- Celine part -->
+    <div id="main">
+        <button id="add" onclick=add()>Add tracking</button>
+    </div>
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <script>
+        // $(".search").click(function () {
+        //     var companyid = $("#companyid").val();
+        //     var numberofQueue = []
+        //     $.ajax({
+        //         url: `http://localhost:8080/company/queue?company_id=${companyid}`,
+        //         type: 'GET',
+        //         contentType: "application/json; charset=utf-8",
+        //         dataType: 'json',
+        //         success: function (data, textStatus, xhr) {
+        //             var $dropdown = $("#queueid");
+        //             $dropdown.empty()
+        //             for (let i = 0; i < data.length; i++) {
+        //                 console.log(data[i].queue_id);
+        //                 numberofQueue.push(data[i].queue_id)
+        //                 $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+        //             }
+        //             var ctx = document.getElementById('myChart');
+        //             var myLineChart = new Chart(ctx, {
+        //                 type: 'line',
+        //                 data: {
+        //                     labels: numberofQueue,
+        //                     datasets: [{
+        //                         label: '# of Customers in Queue${will be added}',
+        //                         data: [12, 19, 3, 5, 2, 3],
+        //                         backgroundColor: [
+        //                             'rgba(255, 99, 132, 0.2)'
+        //                         ],
+        //                         borderColor: [
+        //                             'rgba(255, 99, 132, 1)',
+        //                             'rgba(54, 162, 235, 1)',
+        //                             'rgba(255, 206, 86, 1)',
+        //                             'rgba(75, 192, 192, 1)',
+        //                             'rgba(153, 102, 255, 1)',
+        //                             'rgba(255, 159, 64, 1)'
+        //                         ],
+        //                         borderWidth: 1,
+        //                     }]
+        //                 },
+        //                 options: {
+        //                     scales: {
+        //                         yAxes: [{
+        //                             ticks: {
+        //                                 beginAtZero: true
+        //                             }
+        //                         }]
+        //                     }
+        //                 }
+        //             });
+        //         },
+        //         error: function (xhr, textStatus, errorThrown) {
+        //             console.log('Error in Operation');
+        //             alert("Function got error");
+        //         }
+        //     })
+        // })
+    </script>
+</body>
+
+</html>
