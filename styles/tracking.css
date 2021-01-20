@@ -3,13 +3,13 @@
     grid-template-columns: 50% 50%;
 }
 
-.track{
+div[class*="track"]{
     border: 1px solid black;
     position: relative;
     margin: 1%;
 }
 
-.close{
+button[class*="close"]{
     position: absolute;
     top: 0;
     right: 0;
