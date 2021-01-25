@@ -4,7 +4,7 @@ add = () => {
                         <button class="close${j}" onclick=deletetracking(${j})>X</button>
                         <label for="companyid">Company ID</label>
                         <input type="text" id="companyid" class="companyid${j}">
-
+                        <div id="loader" class="lds-dual-ring hidden overlay"></div>
                         <button type="submit" class="search${j}" onclick=searchqueue(${j})>Search</button><br>
                         <label for="queueid">Queue ID</label>
                         <select name="queueid" id="queueid" class="queueid${j}">
@@ -31,9 +31,13 @@ searchqueue = (id) =>{
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 dataType: 'json',
+                beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+                    $('#loader').removeClass('hidden')
+                },
                 success: function (data, textStatus, xhr) {
                     var $dropdown = $(`.queueid${id}`);
                     $dropdown.empty()
+                    $('#loader').addClass('hidden')
                     for (let i = 0; i < data.length; i++) {
                         console.log(data[i].queue_id);
                         numberofQueue.push(data[i].queue_id)
