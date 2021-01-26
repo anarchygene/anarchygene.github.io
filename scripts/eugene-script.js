@@ -1,33 +1,36 @@
 var j = 0
+
+//add new tracking
 add = () => {
-    let tracking = `<div class="track${j}">
-                        <button class="close${j}" onclick=deletetracking(${j})>X</button>
+    let tracking = `<div class="track" id="track${j}">
+                        <button class="close" id="close${j}" onclick=deletetracking(${j})>X</button>
                         <label for="companyid">Company ID</label>
-                        <input type="text" id="companyid" class="companyid${j}">
+                        <input type="text" id="companyid${j}" class="companyid">
                         <div id="loader" class="lds-dual-ring hidden overlay"></div>
-                        <button type="submit" class="search${j}" onclick=searchqueue(${j})>Search</button><br>
+                        <button type="submit" class="search" id="search${j}" onclick=searchqueue(${j})>Search</button><br>
                         <label for="queueid">Queue ID</label>
-                        <select name="queueid" id="queueid" class="queueid${j}">
-                            <option value="1">hello</option>
+                        <select name="queueid" id="queueid${j}" class="queueid">
                         </select>
 
                         <label for="hide">Hide inactive</label>
-                        <input type="checkbox" name="hide" id="hide">
+                        <input type="checkbox" name="hide" id="hide${j}" checked>
                         <canvas id="myChart" width="400" height="400"></canvas>
                     </div>`
-    document.getElementById("add").insertAdjacentHTML("beforebegin", tracking)
+    document.getElementById("addtrack").insertAdjacentHTML("beforebegin", tracking)
     console.log(`Add new tracking ${j}`)
     j++;
 }
 
+//get queue
 searchqueue = (id) =>{
-    for (let i = 0; i < j; i++) {
+    for (let i = 0; i < j; i++) { 
         if (i == id) {
-            var companyid = $(`.companyid${id}`).val();
+            var companyid = $(`#companyid${id}`).val();
             console.log(companyid);
             var numberofQueue = []
             $.ajax({
-                url: `http://localhost:8080/company/queue?company_id=${companyid}`,
+                url: "http://localhost:8080/company/queue",
+                data: {"company_id":companyid},
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 dataType: 'json',
@@ -35,14 +38,34 @@ searchqueue = (id) =>{
                     $('#loader').removeClass('hidden')
                 },
                 success: function (data, textStatus, xhr) {
-                    var $dropdown = $(`.queueid${id}`);
+                    var $dropdown = $(`#queueid${id}`);
                     $dropdown.empty()
                     $('#loader').addClass('hidden')
                     for (let i = 0; i < data.length; i++) {
                         console.log(data[i].queue_id);
                         numberofQueue.push(data[i].queue_id)
-                        $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+                        //deactivate inactive queues
+                        if($(`#hide${id}`).prop('checked')){
+                            if (data[i].is_active == 1){
+                                $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+                            }
+                            else{
+                                continue
+                            }
+                            console.log("check")
+                        }
+                        else{
+                            if (data[i].is_active == 1) {
+                                $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+                            }
+                            else {
+                                $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]} - inactive</option>`);
+                            }
+                            console.log("no")
+                        }
                     }
+                    
+                    //graph
                     var ctx = document.getElementById('myChart');
                     var myLineChart = new Chart(ctx, {
                         type: 'line',
@@ -85,15 +108,17 @@ searchqueue = (id) =>{
     }
 }
 
+//delete tracking
 deletetracking = (id) => {
     for (let i = 0; i < j; i++) {
         if (i == id) {
             console.log(`Removed tracking ${id}`)
-            $(`.track${id}`).remove()
+            $(`#track${id}`).remove()
         }
     }
 }
 
+//check total active tracking
 check = () => {
-    console.log(`Total number of tracks ${document.querySelectorAll('[class*="track"]').length}`);
+    console.log(`Total number of tracks ${document.querySelectorAll('[class="track"]').length}`);
 }

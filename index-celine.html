@@ -9,11 +9,14 @@
     <link rel="stylesheet" href="styles/style.css">
     <script src="scripts/add track.js"></script>
     <script>
-        $(".close").on("click", () => {
+        /*$(".close").on("click", () => {
             console.log("yeet")
             $(".track").remove()
             //$(this).parent().remove()
-        })
+        })*/
+        $("#main").delegate(".close", "click", function () {
+                $(this).closest('.track').remove();
+            });
     </script>
 </head>
 <body>
@@ -28,11 +31,10 @@
             </form>
             <label for="queueid">Queue ID</label>
             <select name="queueid" id="queueid">
-                <option value="1">hello</option>
             </select>
 
             <label for="hide">Hide inactive</label>
-            <input type="checkbox" name="hide" id="hide">
+            <input type="checkbox" name="hide" id="hide" checked>
         </div>
         <button id="add" onclick=add()>Add tracking</button>
     </div>
