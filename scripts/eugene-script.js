@@ -38,70 +38,79 @@ searchqueue = (id) =>{
                     $('#loader').removeClass('hidden')
                 },
                 success: function (data, textStatus, xhr) {
-                    var $dropdown = $(`#queueid${id}`);
-                    $dropdown.empty()
-                    $('#loader').addClass('hidden')
-                    for (let i = 0; i < data.length; i++) {
-                        console.log(data[i].queue_id);
-                        numberofQueue.push(data[i].queue_id)
-                        //deactivate inactive queues
-                        if($(`#hide${id}`).prop('checked')){
-                            if (data[i].is_active == 1){
-                                $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
-                            }
-                            else{
-                                continue
-                            }
-                            console.log("check")
-                        }
-                        else{
-                            if (data[i].is_active == 1) {
-                                $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+                    //companyid not found
+                    if (data.length == 0){
+                        alert("Company ID not found")
+                    }
+                    else{
+                        var $dropdown = $(`#queueid${id}`);
+                        $dropdown.empty()
+                        $('#loader').addClass('hidden')
+                        for (let i = 0; i < data.length; i++) {
+                            console.log(data[i].queue_id);
+                            numberofQueue.push(data[i].queue_id)
+                            //deactivate inactive queues
+                            if ($(`#hide${id}`).prop('checked')) {
+                                if (data[i].is_active == 1) {
+                                    $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+                                }
+                                else {
+                                    continue
+                                }
+                                console.log("check")
                             }
                             else {
-                                $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]} - inactive</option>`);
+                                if (data[i].is_active == 1) {
+                                    $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
+                                }
+                                else {
+                                    $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]} - inactive</option>`);
+                                }
+                                console.log("no")
                             }
-                            console.log("no")
                         }
-                    }
-                    
-                    //graph
-                    var ctx = document.getElementById('myChart');
-                    var myLineChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: numberofQueue,
-                            datasets: [{
-                                label: '# of Customers in Queue${will be added}',
-                                data: [12, 19, 3, 5, 2, 3],
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 0.2)'
-                                ],
-                                borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
-                                borderWidth: 1,
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero: true
-                                    }
+
+                        //graph
+                        var ctx = document.getElementById('myChart');
+                        var myLineChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: numberofQueue,
+                                datasets: [{
+                                    label: '# of Customers in Queue${will be added}',
+                                    data: [12, 19, 3, 5, 2, 3],
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)'
+                                    ],
+                                    borderWidth: 1,
                                 }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }]
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 },
                 error: function (xhr, textStatus, errorThrown) {
-                    console.log('Error in Operation');
-                    alert("Function got error");
+                    switch(xhr.status){
+                        case 400: alert("Invalid Company ID"); console.log('Invalid Company ID entered'); break;
+                        case 500: alert(xhr.responseJSON.error); console.log(xhr.responseJSON.error); break;
+                        default: alert("Error"); console.log('Error in Operation');
+                    }
                 }
             })
         }
