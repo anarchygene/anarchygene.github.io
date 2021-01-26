@@ -1,133 +1,196 @@
-var j = 0
+//variables to be used later
+var j = 0;
+var inactiveQueues = [];
+var activeQueues = [];
 
 //add new tracking
-add = () => {
+addTracking = () => {
+    //push empty arrays into the 2 main arrays
+    inactiveQueues.push([]);
+    activeQueues.push([]);
     let tracking = `<div class="track" id="track${j}">
-                        <button class="close" id="close${j}" onclick=deletetracking(${j})>X</button>
-                        <label for="companyid">Company ID</label>
-                        <input type="text" id="companyid${j}" class="companyid">
-                        <div id="loader" class="lds-dual-ring hidden overlay"></div>
-                        <button type="submit" class="search" id="search${j}" onclick=searchqueue(${j})>Search</button><br>
-                        <label for="queueid">Queue ID</label>
-                        <select name="queueid" id="queueid${j}" class="queueid">
+                        <button class="close${j}" id="close${j}" onclick=deleteTracking(${j})>X</button>
+                        <label for="companyid${j}">Company ID</label>
+                        <input type="text" name="companyid${j}" id="companyid${j}" class="companyid${j}">
+                        <div id="loader${j}" class="lds-dual-ring hidden overlay"></div>
+                        <div class="loader${j}"></div>
+                        <button type="submit" class="search${j}" id="search${j}" onclick=searchQueue(${j})>Search</button><br>
+                        <label for="queueid${j}">Queue ID</label>
+                        <select name="queueid${j}" id="queueid${j}" class="queueid${j}" onchange="arrivalRate(${j})">
                         </select>
 
-                        <label for="hide">Hide inactive</label>
-                        <input type="checkbox" name="hide" id="hide${j}" checked>
-                        <canvas id="myChart" width="400" height="400"></canvas>
-                    </div>`
-    document.getElementById("addtrack").insertAdjacentHTML("beforebegin", tracking)
-    console.log(`Add new tracking ${j}`)
+                        <label for="hide${j}">Hide inactive</label>
+                        <input type="checkbox" name="hide${j}" id="hide${j}" onclick="checkQueueActivity(${j})" checked>
+                        <canvas id="myChart${j}" width="200" height="200"></canvas>
+                    </div>`;
+    document.getElementById("addtrack").insertAdjacentHTML("beforebegin", tracking);
+    console.log(`Add new tracking ${j}`);
     j++;
-}
+};
+
+//hide or show inactive queue
+checkQueueActivity = (id) => {
+    var $dropdown = $(`#queueid${id}`);
+    if ($(`#hide${id}`).prop('checked')) {
+        //if hide is checked, empty the options in select and populate with active queues only
+        $dropdown.empty();
+        for (let i = 0; i < activeQueues[id].length; i++) {
+            $dropdown.append(activeQueues[id][i]);
+        }
+    } else {
+        //if hide is unchecked, append inactive queues to select
+        for (let i = 0; i < inactiveQueues[id].length; i++) {
+            $dropdown.append(inactiveQueues[id][i]);
+        }
+    }
+};
+
 
 //get queue
-searchqueue = (id) =>{
-    for (let i = 0; i < j; i++) { 
-        if (i == id) {
-            var companyid = $(`#companyid${id}`).val();
-            console.log(companyid);
-            var numberofQueue = []
-            $.ajax({
-                url: "http://localhost:8080/company/queue",
-                data: {"company_id":companyid},
-                type: 'GET',
-                contentType: "application/json; charset=utf-8",
-                dataType: 'json',
-                beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
-                    $('#loader').removeClass('hidden')
-                },
-                success: function (data, textStatus, xhr) {
-                    //companyid not found
-                    if (data.length == 0){
-                        alert("Company ID not found")
-                    }
-                    else{
-                        var $dropdown = $(`#queueid${id}`);
-                        $dropdown.empty()
-                        $('#loader').addClass('hidden')
-                        for (let i = 0; i < data.length; i++) {
-                            console.log(data[i].queue_id);
-                            numberofQueue.push(data[i].queue_id)
-                            //deactivate inactive queues
-                            if ($(`#hide${id}`).prop('checked')) {
-                                if (data[i].is_active == 1) {
-                                    $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
-                                }
-                                else {
-                                    continue
-                                }
-                                console.log("check")
-                            }
-                            else {
-                                if (data[i].is_active == 1) {
-                                    $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]}</option>`);
-                                }
-                                else {
-                                    $dropdown.append(`<option value=${numberofQueue[i]}>${numberofQueue[i]} - inactive</option>`);
-                                }
-                                console.log("no")
-                            }
+searchQueue = (id) => {
+    //reset the arrays in the 2 main array
+    inactiveQueues[id] = [];
+    activeQueues[id] = [];
+    //get companyid from textbox
+    companyid = $(`#companyid${id}`).val();
+    $.ajax({
+        url: "http://localhost:8080/company/queue",
+        data: { "company_id": companyid },
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        beforeSend: function () {
+            //before we send the request, remove the .hidden class from the spinner and default to inline-block.
+            $(`#loader${id}`).removeClass('hidden')
+        },
+        success: function (data, textStatus, xhr) {
+            if (data.length == 0) {
+                //if companyid is not found
+                alert("Company ID not found");
+            }
+            else {
+                var $dropdown = $(`#queueid${id}`);
+                $dropdown.empty();
+                $('#loader').addClass('hidden')
+                for (let i = 0; i < data.length; i++) {
+                    //deactivate inactive queues
+                    if ($(`#hide${id}`).prop('checked')) {
+                        if (data[i].is_active == 1) {
+                            activeQueues[id].push(`<option value=${data[i].queue_id}>${data[i].queue_id}</option>`);
+                            $dropdown.append(`<option value=${data[i].queue_id}>${data[i].queue_id}</option>`);
                         }
-
-                        //graph
-                        var ctx = document.getElementById('myChart');
-                        var myLineChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: numberofQueue,
-                                datasets: [{
-                                    label: '# of Customers in Queue${will be added}',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)'
-                                    ],
-                                    borderWidth: 1,
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
-                        });
+                        else {
+                            inactiveQueues[id].push(`<option value=${data[i].queue_id}>${data[i].queue_id} - inactive</option>`);
+                        }
+                        console.log("check");
                     }
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    switch(xhr.status){
-                        case 400: alert("Invalid Company ID"); console.log('Invalid Company ID entered'); break;
-                        case 500: alert(xhr.responseJSON.error); console.log(xhr.responseJSON.error); break;
-                        default: alert("Error"); console.log('Error in Operation');
+                    else {
+                        if (data[i].is_active == 1) {
+                            activeQueues[id].push(`<option value=${data[i].queue_id}>${data[i].queue_id}</option>`);
+                            $dropdown.append(`<option value=${data[i].queue_id}>${data[i].queue_id}</option>`);
+                        }
+                        else {
+                            inactiveQueues[id].push(`<option value=${data[i].queue_id}>${data[i].queue_id} - inactive</option>`);
+                            $dropdown.append(`<option value=${data[i].queue_id}>${data[i].queue_id} - inactive</option>`);
+                        }
+                        console.log("no");
                     }
                 }
-            })
+                $(`.loader${id}`).remove();
+                arrivalRate(id);
+            }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            //error handling
+            switch (xhr.status) {
+                case 400: alert("Invalid Company ID"); console.log('Invalid Company ID entered'); break;
+                case 500: alert(xhr.responseJSON.error); console.log(xhr.responseJSON.error); break;
+                default: alert("Error"); console.log('Error in Operation');
+            }
         }
-    }
-}
+    })
+};
 
 //delete tracking
-deletetracking = (id) => {
-    for (let i = 0; i < j; i++) {
-        if (i == id) {
-            console.log(`Removed tracking ${id}`)
-            $(`#track${id}`).remove()
-        }
-    }
-}
+deleteTracking = (id) => {
+    console.log(`Removed tracking ${id}`);
+    $(`#track${id}`).remove();
+};
 
 //check total active tracking
-check = () => {
-    console.log(`Total number of tracks ${document.querySelectorAll('[class="track"]').length}`);
-}
+checkTracking = () => {
+    $(`#trackingnumber`).replaceWith(`<h4 id="trackingnumber">Total number of tracks: ${$(`div`).find('[class*="track"]').length}</h4>`)
+    console.log(inactiveQueues);
+    console.log(activeQueues);
+};
+
+//load rate of arrival to graph
+arrivalRate = (id) => {
+    counts = [];
+    labels = [];
+    c = new Date();
+    d = new Date(c.getTime() - 3 * 60000);
+    queue_id = document.getElementById(`queueid${id}`).value;
+    duration = 3;
+    from = d.toISOString();
+    from = from.slice(0, from.length - 5);
+    console.log(from);
+    $.ajax({
+        url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=${from}%2B00:00&duration=${duration}`,
+        //url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=2021-01-25T17:43:20%2B00:00&duration=${duration}`,
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        success: function (data, textStatus, xhr) {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].count != 0) {
+                    counts.push(data[i].count)
+                    label = new Date(data[i].timestamp * 1000).toLocaleString();
+                    //label = label.slice(0, label.length - 6)
+                    labels.push(label)
+                    //console.log(data[i]);
+                }
+            }
+            var ctx = document.getElementById(`myChart${id}`);
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `# of Customers in ${queue_id}`,
+                        data: counts,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)'
+                        ],
+                        // borderColor: [
+                        //     'rgba(255, 99, 132, 1)',
+                        //     'rgba(54, 162, 235, 1)',
+                        //     'rgba(255, 206, 86, 1)',
+                        //     'rgba(75, 192, 192, 1)',
+                        //     'rgba(153, 102, 255, 1)',
+                        //     'rgba(255, 159, 64, 1)'
+                        // ],
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            console.log('Success');
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            console.log('Error in Operation');
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+            alert("Arrival Rate got error");
+        }
+    })
+};
