@@ -156,6 +156,7 @@ arrivalRate = (id) => {
                         labels.push(label)
                         //console.log(data[i]);
                     }
+                }
                 var ctx = document.getElementById(`myChart${id}`);
                 var myLineChart = new Chart(ctx, {
                     type: 'line',
