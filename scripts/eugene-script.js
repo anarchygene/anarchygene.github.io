@@ -3,20 +3,22 @@ var j = 0;
 var inactiveQueues = [];
 var activeQueues = [];
 
+//<div class="loader" id="loader${j}"></div>
+
 //add new tracking
 addTracking = () => {
     //push empty arrays into the 2 main arrays
     inactiveQueues.push([]);
     activeQueues.push([]);
     let tracking = `<div class="track" id="track${j}">
-                        <button class="close${j}" id="close${j}" onclick=deleteTracking(${j})>X</button>
+                        <button class="close" id="close${j}" onclick=deleteTracking(${j})>X</button>
                         <label for="companyid${j}">Company ID</label>
-                        <input type="text" name="companyid${j}" id="companyid${j}" class="companyid${j}">
-                        <div id="loader${j}" class="lds-dual-ring hidden overlay"></div>
-                        <div class="loader${j}"></div>
+                        <input type="text" name="companyid${j}" id="companyid${j}" class="companyid">
+                        <div id="loader${j}" class="lds-dual-ring hidden overlay loader"></div>
+                        
                         <button type="submit" class="search${j}" id="search${j}" onclick=searchQueue(${j})>Search</button><br>
                         <label for="queueid${j}">Queue ID</label>
-                        <select name="queueid${j}" id="queueid${j}" class="queueid${j}" onchange="arrivalRate(${j})">
+                        <select name="queueid${j}" id="queueid${j}" class="queueid" onchange="arrivalRate(${j})">
                         </select>
 
                         <label for="hide${j}">Hide inactive</label>
@@ -37,11 +39,13 @@ checkQueueActivity = (id) => {
         for (let i = 0; i < activeQueues[id].length; i++) {
             $dropdown.append(activeQueues[id][i]);
         }
+        console.log(activeQueues[id])
     } else {
         //if hide is unchecked, append inactive queues to select
         for (let i = 0; i < inactiveQueues[id].length; i++) {
             $dropdown.append(inactiveQueues[id][i]);
         }
+        console.log(inactiveQueues[id])
     }
 };
 
@@ -70,7 +74,7 @@ searchQueue = (id) => {
             else {
                 var $dropdown = $(`#queueid${id}`);
                 $dropdown.empty();
-                $('#loader').addClass('hidden');
+                $(`#loader${id}`).addClass('hidden')
                 for (let i = 0; i < data.length; i++) {
                     //deactivate inactive queues
                     if ($(`#hide${id}`).prop('checked')) {
@@ -130,15 +134,16 @@ arrivalRate = (id) => {
         counts = [];
         labels = [];
         c = new Date();
-        d = new Date(c.getTime() - 5 * 60000);
+        d = new Date(c.getTime() - 3 * 60000);
         queue_id = document.getElementById(`queueid${id}`).value;
         duration = 3;
         from = d.toISOString();
         from = from.slice(0, from.length - 5);
         console.log(from);
         $.ajax({
-            url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=${from}%2B00:00&duration=${duration}`,
-            //url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=2021-01-29T11:15:56%2B00:00&duration=${duration}`,
+            url: "http://localhost:8080/company/arrival_rate",
+            data: { "queue_id": queue_id, "from": from + "%2B00:00", "duration": duration },
+            //url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=2021-01-25T17:43:20%2B00:00&duration=${duration}`,
             type: 'GET',
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
@@ -147,10 +152,10 @@ arrivalRate = (id) => {
                     if (data[i].count != 0) {
                         counts.push(data[i].count)
                         label = new Date(data[i].timestamp * 1000).toLocaleString();
+                        //label = label.slice(0, label.length - 6)
                         labels.push(label)
                         //console.log(data[i]);
                     }
-                }
                 var ctx = document.getElementById(`myChart${id}`);
                 var myLineChart = new Chart(ctx, {
                     type: 'line',

@@ -3,19 +3,19 @@
     grid-template-columns: 50% 50%;
 }
 
-[class*="track"] {
+.track {
     border: 1px solid black;
     position: relative;
     margin: 1%;
 }
 
-[class*="close"] {
+.close {
     position: absolute;
     top: 1%;
     right: 0;
 }
 
-[class*="search"] {
+.search {
     position: absolute;
     top: 1%;
     left: 40%;
