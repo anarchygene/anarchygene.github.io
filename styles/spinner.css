@@ -29,10 +29,11 @@
 
 /*Spinner Styles*/
 .lds-dual-ring {
-    display: inline-block;
     width: 80px;
     height: 80px;
+    position: relative;
 }
+
 .lds-dual-ring:after {
     content: " ";
     display: block;

@@ -1,7 +1,7 @@
 //variables to be used later
-var j = 0;
-var inactiveQueues = [];
-var activeQueues = [];
+let j = 0;
+let inactiveQueues = [];
+let activeQueues = [];
 
 //<div class="loader" id="loader${j}"></div>
 
@@ -32,7 +32,7 @@ addTracking = () => {
 
 //hide or show inactive queue
 checkQueueActivity = (id) => {
-    var $dropdown = $(`#queueid${id}`);
+    let $dropdown = $(`#queueid${id}`);
     if ($(`#hide${id}`).prop('checked')) {
         //if hide is checked, empty the options in select and populate with active queues only
         $dropdown.empty();
@@ -72,7 +72,7 @@ searchQueue = (id) => {
                 alert("Company ID not found");
             }
             else {
-                var $dropdown = $(`#queueid${id}`);
+                let $dropdown = $(`#queueid${id}`);
                 $dropdown.empty();
                 $(`#loader${id}`).addClass('hidden')
                 for (let i = 0; i < data.length; i++) {
@@ -157,8 +157,8 @@ arrivalRate = (id) => {
                         //console.log(data[i]);
                     }
                 }
-                var ctx = document.getElementById(`myChart${id}`);
-                var myLineChart = new Chart(ctx, {
+                let ctx = document.getElementById(`myChart${id}`);
+                let myLineChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
