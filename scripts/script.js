@@ -3,8 +3,6 @@ let j = 0;
 let inactiveQueues = [];
 let activeQueues = [];
 
-//<div class="loader" id="loader${j}"></div>
-
 //add new tracking
 addTracking = () => {
     //push empty arrays into the 2 main arrays
@@ -15,7 +13,7 @@ addTracking = () => {
                         <label for="companyid${j}">Company ID</label>
                         <input type="text" name="companyid${j}" id="companyid${j}" class="companyid">
                         <button type="submit" class="search${j}" id="search${j}" onclick=searchQueue(${j})>Search</button><br>
-                        <div id="loader${j}" class="lds-dual-ring hidden overlay loader"></div>
+                        <div id="loader${j}" class="lds-dual-ring hidden"></div>
                         
                         <label for="queueid${j}">Queue ID</label>
                         <select name="queueid${j}" id="queueid${j}" class="queueid" onchange="arrivalRate(${j})">
@@ -141,7 +139,8 @@ arrivalRate = (id) => {
         from = from.slice(0, from.length - 5);
         console.log(from);
         $.ajax({
-            url: "http://localhost:8080/company/arrival_rate",
+            //url: "http://localhost:8080/company/arrival_rate",
+            url: "https://iojdasnk.herokuapp.com/arrival_rate",
             data: { "queue_id": queue_id, "from": from + "+00:00", "duration": duration },
             //url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=2021-01-25T17:43:20%2B00:00&duration=${duration}`,
             type: 'GET',
