@@ -140,7 +140,7 @@ arrivalRate = (id) => {
         console.log(from);
         $.ajax({
             //url: "http://localhost:8080/company/arrival_rate",
-            url: "https://ades-2b01.herokuapp.com/arrival_rate",
+            url: "https://ades-2b01.herokuapp.com/company/arrival_rate",
             data: { "queue_id": queue_id, "from": from + "+00:00", "duration": duration },
             //url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=2021-01-25T17:43:20%2B00:00&duration=${duration}`,
             type: 'GET',
