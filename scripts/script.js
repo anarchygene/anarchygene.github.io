@@ -65,6 +65,8 @@ searchQueue = (id) => {
             //reset the arrays in the 2 main array
             inactiveQueues[id] = [];
             activeQueues[id] = [];
+            console.log(data);
+            alert(data)
             if (data.length == 0) {
                 //if companyid is not found
                 alert("Company ID not found");
@@ -126,7 +128,7 @@ checkTracking = () => {
 };
 
 //load rate of arrival to graph
-arrivalRate = (id) => {
+arrivalRate = (id) => { 
     //if tracking is not deleted
     if (document.getElementById(`queueid${id}`) != null) {
         counts = [];
