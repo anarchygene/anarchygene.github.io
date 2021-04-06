@@ -52,7 +52,7 @@ searchQueue = (id) => {
     //get companyid from textbox
     companyid = $(`#companyid${id}`).val();
     $.ajax({
-        url: "https://ades-2b01.herokuapp.com/company/queue",
+        url: "https://adestestapp.herokuapp.com/company/queue",
         data: { "company_id": companyid },
         type: 'GET',
         contentType: "application/json; charset=utf-8",
@@ -140,7 +140,7 @@ arrivalRate = (id) => {
         console.log(from);
         $.ajax({
             //url: "http://localhost:8080/company/arrival_rate",
-            url: "https://ades-2b01.herokuapp.com/company/arrival_rate",
+            url: "https://adestestapp.herokuapp.com/company/arrival_rate",
             data: { "queue_id": queue_id, "from": from + "+00:00", "duration": duration },
             //url: `http://localhost:8080/company/arrival_rate?queue_id=${queue_id}&from=2021-01-25T17:43:20%2B00:00&duration=${duration}`,
             type: 'GET',
